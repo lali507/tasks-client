@@ -35,6 +35,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // SC-01-R3: an expired token or a deleted user (UM-07) -> back to login
   useEffect(() => onUnauthorized(signOut), [signOut])
 
+  // SC-01-R2: localStorage is shared by every tab of the browser. When another tab logs in
+  // as someone else or logs out, reload, so this tab shows the user whose token it sends.
+  useEffect(() => {
+    const handler = (event: StorageEvent) => {
+      if (event.key === authStorageKey || event.key === null) window.location.reload()
+    }
+    window.addEventListener('storage', handler)
+    return () => window.removeEventListener('storage', handler)
+  }, [])
+
   return <AuthContext.Provider value={{ user, signIn, signOut }}>{children}</AuthContext.Provider>
 }
 
