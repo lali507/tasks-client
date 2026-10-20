@@ -1,8 +1,9 @@
-import { useState, type FormEvent } from 'react'
+import { useState, type ChangeEvent, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { looksLikeEmail, register } from '../api/auth'
 import { ApiError, GENERIC_ERROR } from '../api/client'
 import { useAuth } from '../auth/AuthContext'
+import { AuthLayout } from '../components/AuthLayout'
 import { Field } from '../components/Field'
 
 // SC-02
@@ -13,7 +14,7 @@ export function RegisterPage() {
   const [errors, setErrors] = useState<Record<string, string | undefined>>({})
   const [busy, setBusy] = useState(false)
 
-  const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, [key]: e.target.value })
+  const set = (key: keyof typeof form) => (e: ChangeEvent<HTMLInputElement>) => setForm({ ...form, [key]: e.target.value })
 
   const submit = async (event: FormEvent) => {
     event.preventDefault()
@@ -44,8 +45,7 @@ export function RegisterPage() {
   }
 
   return (
-    <div className="center card">
-      <h1>הרשמה</h1>
+    <AuthLayout title="הרשמה" subtitle="פותחים חשבון ומתחילים לעבוד מיד.">
       <form className="form" onSubmit={submit} noValidate>
         <Field label="אימייל" type="email" autoComplete="email" value={form.email} onChange={set('email')} error={errors.email} />
         <Field label="שם תצוגה" autoComplete="name" value={form.displayName} onChange={set('displayName')} error={errors.displayName} />
@@ -53,9 +53,9 @@ export function RegisterPage() {
           hint="8–64 תווים, לפחות אות אחת וספרה אחת" />
         <Field label="אימות סיסמה" type="password" autoComplete="new-password" value={form.confirm} onChange={set('confirm')} error={errors.confirm} />
         {errors.form && <div className="form-error" role="alert">{errors.form}</div>}
-        <button type="submit" disabled={busy}>הרשמה</button>
-        <span>יש לך חשבון? <Link to="/login">התחברות</Link></span>
+        <button type="submit" disabled={busy}>{busy ? 'נרשמים…' : 'הרשמה'}</button>
+        <span className="switch">יש לך חשבון? <Link to="/login">התחברות</Link></span>
       </form>
-    </div>
+    </AuthLayout>
   )
 }

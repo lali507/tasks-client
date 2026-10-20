@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router'
 import { login, looksLikeEmail } from '../api/auth'
 import { ApiError, GENERIC_ERROR } from '../api/client'
 import { useAuth } from '../auth/AuthContext'
+import { AuthLayout } from '../components/AuthLayout'
 import { Field } from '../components/Field'
 
 // SC-01
@@ -40,15 +41,14 @@ export function LoginPage() {
   }
 
   return (
-    <div className="center card">
-      <h1>התחברות</h1>
+    <AuthLayout title="התחברות" subtitle="ברוכים השבים! הזינו אימייל וסיסמה.">
       <form className="form" onSubmit={submit} noValidate>
         <Field label="אימייל" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} error={errors.email} />
         <Field label="סיסמה" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} error={errors.password} />
         {errors.form && <div className="form-error" role="alert">{errors.form}</div>}
-        <button type="submit" disabled={busy}>התחברות</button>
-        <span>אין לך חשבון? <Link to="/register">הרשמה</Link></span>
+        <button type="submit" disabled={busy}>{busy ? 'מתחברים…' : 'התחברות'}</button>
+        <span className="switch">אין לך חשבון? <Link to="/register">הרשמה</Link></span>
       </form>
-    </div>
+    </AuthLayout>
   )
 }

@@ -3,9 +3,10 @@ import { useSearchParams } from 'react-router'
 import { labelsApi, messageFor, projectsApi, tasksApi } from '../api/resources'
 import type { LabelResponse, PagedResponse, ProjectResponse, Status, TaskRequest, TaskResponse } from '../api/types'
 import { useAuth } from '../auth/AuthContext'
+import { Page } from '../components/Layout'
 import { useNotice } from '../components/Notice'
 import { Pager } from '../components/Pager'
-import { TaskCard, statusText } from '../components/TaskCard'
+import { TaskCard, TaskSkeletons, statusText } from '../components/TaskCard'
 import { TaskForm } from '../components/TaskForm'
 
 // SC-03: the filters live in the address, so "projects -> click a name" opens this screen filtered (SC-05)
@@ -75,8 +76,8 @@ export function TasksPage() {
   }
 
   return (
-    <>
-      <h1>משימות</h1>
+    <Page title="משימות" subtitle={isAdmin ? 'יצירה, עריכה ומחיקה של משימות הצוות' : 'בחרו משימה פתוחה וקחו אותה'}
+      action={isAdmin && !editing && <button type="button" onClick={() => setEditing('new')}>+ משימה חדשה</button>}>
       {notice.element}
 
       <div className="toolbar">
@@ -94,7 +95,7 @@ export function TasksPage() {
             {projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
         </label>
-        {isAdmin && !editing && <button type="button" onClick={() => setEditing('new')}>משימה חדשה</button>}
+        {data && <span className="count">{data.totalCount} משימות</span>}
       </div>
 
       {editing && (
@@ -105,14 +106,15 @@ export function TasksPage() {
       <div className="tasks">
         {data?.items.map((task) => (
           <TaskCard key={task.id} task={task}>
-            {!isAdmin && task.status === 'Open' && <button type="button" onClick={() => void take(task)}>קחי משימה</button>}
-            {isAdmin && task.status !== 'Done' && <button type="button" className="secondary" onClick={() => setEditing(task)}>עריכה</button>}
-            {isAdmin && task.status !== 'Taken' && <button type="button" className="danger" onClick={() => remove(task)}>מחיקה</button>}
+            {!isAdmin && task.status === 'Open' && <button type="button" className="small" onClick={() => void take(task)}>קחי משימה</button>}
+            {isAdmin && task.status !== 'Done' && <button type="button" className="secondary small" onClick={() => setEditing(task)}>עריכה</button>}
+            {isAdmin && task.status !== 'Taken' && <button type="button" className="danger small" onClick={() => remove(task)}>מחיקה</button>}
           </TaskCard>
         ))}
-        {data && data.items.length === 0 && <div className="empty">אין משימות</div>}
+        {!data && <TaskSkeletons />}
+        {data && data.items.length === 0 && <div className="empty"><strong>אין משימות</strong>נסו לשנות את הסינון</div>}
       </div>
       {data && <Pager page={page} pageSize={data.pageSize} totalCount={data.totalCount} onChange={(p) => setFilter('page', p)} />}
-    </>
+    </Page>
   )
 }

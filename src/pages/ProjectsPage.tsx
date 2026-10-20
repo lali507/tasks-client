@@ -1,4 +1,6 @@
-// Built in a later task
+import { Page } from '../components/Layout'
+
+// Built in task 44
 export function ProjectsPage() {
-  return <h1>ניהול פרויקטים</h1>
+  return <Page title="ניהול פרויקטים"><div className="empty"><strong>בקרוב</strong>המסך ייבנה במשימה 44</div></Page>
 }

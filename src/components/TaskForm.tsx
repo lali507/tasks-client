@@ -41,34 +41,36 @@ export function TaskForm({ task, projects, labels, onSave, onCancel }: {
   }
 
   return (
-    <form className="card form wide" onSubmit={submit} noValidate>
+    <form className="card form form-card" onSubmit={submit} noValidate>
       <h2>{task ? 'עריכת משימה' : 'משימה חדשה'}</h2>
-      <Field label="כותרת" value={title} onChange={(e) => setTitle(e.target.value)} error={errors.title} />
-      <label className="field">
-        <span>תיאור</span>
-        <textarea rows={3} value={description} onChange={(e) => setDescription(e.target.value)} />
-        {errors.description && <span className="error">{errors.description}</span>}
-      </label>
-      <label className="field">
-        <span>פרויקט</span>
-        <select value={projectId} onChange={(e) => setProjectId(e.target.value ? Number(e.target.value) : '')}>
-          <option value="">בחרי פרויקט</option>
-          {projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-        </select>
-        {errors.projectId && <span className="error">{errors.projectId}</span>}
-      </label>
-      <fieldset className="field">
-        <span>תוויות</span>
-        <div className="checks">
-          {labels.map((l) => (
-            <label key={l.id}><input type="checkbox" checked={labelIds.includes(l.id)} onChange={() => toggle(l.id)} /> {l.name}</label>
-          ))}
-        </div>
-        {errors.labelIds && <span className="error">{errors.labelIds}</span>}
-      </fieldset>
+      <div className="form-grid">
+        <Field label="כותרת" value={title} onChange={(e) => setTitle(e.target.value)} error={errors.title} />
+        <label className="field">
+          <span>פרויקט</span>
+          <select value={projectId} onChange={(e) => setProjectId(e.target.value ? Number(e.target.value) : '')} aria-invalid={!!errors.projectId}>
+            <option value="">בחרי פרויקט</option>
+            {projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+          </select>
+          {errors.projectId && <span className="error">{errors.projectId}</span>}
+        </label>
+        <label className="field full">
+          <span>תיאור</span>
+          <textarea rows={3} value={description} onChange={(e) => setDescription(e.target.value)} />
+          {errors.description && <span className="error">{errors.description}</span>}
+        </label>
+        <fieldset className="field full">
+          <span>תוויות</span>
+          <div className="checks">
+            {labels.map((l) => (
+              <label key={l.id} className="check-pill"><input type="checkbox" checked={labelIds.includes(l.id)} onChange={() => toggle(l.id)} /> {l.name}</label>
+            ))}
+          </div>
+          {errors.labelIds && <span className="error">{errors.labelIds}</span>}
+        </fieldset>
+      </div>
       {errors.form && <div className="form-error" role="alert">{errors.form}</div>}
       <div className="actions">
-        <button type="submit" disabled={busy}>שמירה</button>
+        <button type="submit" disabled={busy}>{busy ? 'שומרים…' : 'שמירה'}</button>
         <button type="button" className="secondary" onClick={onCancel}>ביטול</button>
       </div>
     </form>
