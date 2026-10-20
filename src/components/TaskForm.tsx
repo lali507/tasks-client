@@ -41,8 +41,7 @@ export function TaskForm({ task, projects, labels, onSave, onCancel }: {
   }
 
   return (
-    <form className="card form form-card" onSubmit={submit} noValidate>
-      <h2>{task ? 'עריכת משימה' : 'משימה חדשה'}</h2>
+    <form className="form" onSubmit={submit} noValidate>
       <div className="form-grid">
         <Field label="כותרת" value={title} onChange={(e) => setTitle(e.target.value)} error={errors.title} />
         <label className="field">

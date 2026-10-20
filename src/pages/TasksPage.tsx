@@ -4,6 +4,7 @@ import { labelsApi, messageFor, projectsApi, tasksApi } from '../api/resources'
 import type { LabelResponse, PagedResponse, ProjectResponse, Status, TaskRequest, TaskResponse } from '../api/types'
 import { useAuth } from '../auth/AuthContext'
 import { Page } from '../components/Layout'
+import { Modal } from '../components/Modal'
 import { useNotice } from '../components/Notice'
 import { Pager } from '../components/Pager'
 import { TaskCard, TaskSkeletons, statusText } from '../components/TaskCard'
@@ -77,7 +78,7 @@ export function TasksPage() {
 
   return (
     <Page title="משימות" subtitle={isAdmin ? 'יצירה, עריכה ומחיקה של משימות הצוות' : 'בחרו משימה פתוחה וקחו אותה'}
-      action={isAdmin && !editing && <button type="button" onClick={() => setEditing('new')}>+ משימה חדשה</button>}>
+      action={isAdmin && <button type="button" onClick={() => setEditing('new')}>+ משימה חדשה</button>}>
       {notice.element}
 
       <div className="toolbar">
@@ -99,8 +100,10 @@ export function TasksPage() {
       </div>
 
       {editing && (
-        <TaskForm key={editing === 'new' ? 'new' : editing.id} task={editing === 'new' ? undefined : editing}
-          projects={projects} labels={labels} onSave={save} onCancel={() => setEditing(null)} />
+        <Modal title={editing === 'new' ? 'משימה חדשה' : 'עריכת משימה'} onClose={() => setEditing(null)}>
+          <TaskForm task={editing === 'new' ? undefined : editing}
+            projects={projects} labels={labels} onSave={save} onCancel={() => setEditing(null)} />
+        </Modal>
       )}
 
       <div className="tasks">
